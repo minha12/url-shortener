@@ -31,6 +31,12 @@ app.get("/api/hello", function (req, res) {
   res.json({greeting: 'hello API'});
 });
 
+//////////////////////My app started here////////////////////
+process.env.MONGO_URI = 'mongodb+srv://minhha-db:minhha89@cluster0-7zk5p.mongodb.net/test?retryWrites=true&w=majority'
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+
+var MongoClient
+/////////////////////////////////////////////////////////////
 
 app.listen(port, function () {
   console.log('Node.js listening ...');
