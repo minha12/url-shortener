@@ -35,7 +35,8 @@ app.get("/api/hello", function (req, res) {
 process.env.MONGO_URI = 'mongodb+srv://minhha-db:minhha89@cluster0-7zk5p.mongodb.net/test?retryWrites=true&w=majority'
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
-var MongoClient
+var MongoClient = mongo.MongoClient
+app.get('/api/shorturl/\d')
 /////////////////////////////////////////////////////////////
 
 app.listen(port, function () {
