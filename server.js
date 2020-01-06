@@ -36,7 +36,10 @@ process.env.MONGO_URI = 'mongodb+srv://minhha-db:minhha89@cluster0-7zk5p.mongodb
 mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 var MongoClient = mongo.MongoClient
-app.get('/api/shorturl/\d')
+app.get('/api/shorturl/:short', function(req, res) {
+  const shortUrl = req.params.short
+  
+})
 /////////////////////////////////////////////////////////////
 
 app.listen(port, function () {
