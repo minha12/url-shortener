@@ -56,13 +56,14 @@ app.post('/api/shorturl/new', function(req, res) {
   const originalUrl = req.body.url
   console.log(originalUrl)
   const randomNumber = Math.floor(Math.random() * 10000 + 1)
-  URLCollection.findOne({originalUrl: originalUrl}, (err, data) => {
+  URLCollection.findOne({original_url: originalUrl}, (err, data) => {
     if(err) return err
     if(data) {
+      console.log('The given URL is available in database')
       res.send(data)
     } else {
       console.log('Creating new an url entry for ' + originalUrl)
-      var newEntry = new URLCollection({originalUrl: originalUrl, shorturl: randomNumber})
+      var newEntry = new URLCollection({original_url: originalUrl, shorturl: randomNumber})
       newEntry.save((err, data) => {
         if(err) return err
         res.send(data)
