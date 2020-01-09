@@ -46,13 +46,29 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
 const Schema = mongoose.Schema
 const urlSchema = new Schema({
   original_url: String,
-  shorturl: String
+  shorturl: Number
 })
+const URLCollection = mongoose.model('URLCollection', urlSchema)
 
+
+//Post a new URL
 app.post('/api/shorturl/new', function(req, res) {
   const originalUrl = req.body.url
   console.log(originalUrl)
   const randomNumber = Math.floor(Math.random() * 10000 + 1)
+  URLCollection.findOne({originalUrl: originalUrl}, (err, data) => {
+    if(err) return err
+    if(data) {
+      res.send(data)
+    } else {
+      console.log('Creating new an url entry for ' + originalUrl)
+      var newEntry = new URLCollection({originalUrl: originalUrl, shorturl: randomNumber})
+      newEntry.save((err, data) => {
+        if(err) return err
+        res.send(data)
+      })
+    }
+  })
 })
 /////////////////////////////////////////////////////////////
 
