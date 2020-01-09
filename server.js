@@ -3,6 +3,7 @@
 var express = require('express');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
+const bodyParser = require('body-parser')
 
 var cors = require('cors');
 
@@ -15,6 +16,9 @@ var port = process.env.PORT || 3000;
 // mongoose.connect(process.env.MONGOLAB_URI);
 
 app.use(cors());
+
+app.use(bodyParser.urlencoded({extended: false}))
+app.use(bodyParser.json())
 
 /** this project needs to parse POST bodies **/
 // you should mount the body-parser here
@@ -39,9 +43,14 @@ mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopol
   }
 })
 
-var MongoClient = mongo.MongoClient
+const Schema = mongoose.Schema
+const urlSchema = new Schema({
+  original_url: String,
+  shorturl: String
+})
+
 app.post('/api/shorturl/new', function(req, res) {
-  const originalUrl = req.url
+  const originalUrl = req.body.url
   console.log(originalUrl)
   const randomNumber = Math.floor(Math.random() * 10000 + 1)
 })
