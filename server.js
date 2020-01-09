@@ -87,7 +87,17 @@ app.post('/api/shorturl/new', function(req, res) {
   
 })
 
-
+//Visit the shortened URL
+app.get('/api/shorturl/:shortId', (req, res) => {
+  URLCollection.findOne({shorturl: req.params.shortId}, (err, data) => {
+    if(err) return err
+    if(data) {
+      res.redirect(data.original_url)
+    } else {
+      res.render('404', {title: 'Page Not Found'})
+    }
+  })
+})
 /////////////////////////////////////////////////////////////
 
 app.listen(port, function () {
