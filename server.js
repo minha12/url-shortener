@@ -33,12 +33,17 @@ app.get("/api/hello", function (req, res) {
 
 //////////////////////My app started here////////////////////
 process.env.MONGO_URI = 'mongodb+srv://minhha-db:minhha89@cluster0-7zk5p.mongodb.net/test?retryWrites=true&w=majority'
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
+  if(!err) {
+    console.log('Successfully connect to MongoDB ...')
+  }
+})
 
 var MongoClient = mongo.MongoClient
-app.get('/api/shorturl/new', function(req, res) {
-  const originalUrl = req.body.url
-  
+app.post('/api/shorturl/new', function(req, res) {
+  const originalUrl = req.url
+  console.log(originalUrl)
+  const randomNumber = Math.floor(Math.random() * 10000 + 1)
 })
 /////////////////////////////////////////////////////////////
 
