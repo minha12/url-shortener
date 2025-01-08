@@ -1,5 +1,7 @@
 'use strict';
 
+require('dotenv').config();
+
 var express = require('express');
 var mongo = require('mongodb');
 var mongoose = require('mongoose');
@@ -41,12 +43,12 @@ app.get("/api/hello", function (req, res) {
 });
 
 //////////////////////My app started here////////////////////
-process.env.MONGO_URI = 'mongodb+srv://minhhax89:ND2GKcDkLjLICZZj@cluster0.igp03.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+const mongoURI = `mongodb+srv://${process.env.MONGO_USERNAME}:${process.env.MONGO_PASSWORD}@${process.env.MONGO_CLUSTER}/?retryWrites=true&w=majority&appName=Cluster0`;
 
-mongoose.connect(process.env.MONGO_URI, { 
+mongoose.connect(mongoURI, { 
   useNewUrlParser: true, 
   useUnifiedTopology: true,
-  dbName: 'urlshortener'
+  dbName: process.env.MONGO_DATABASE
 }).then(() => {
   console.log('Successfully connected to MongoDB...');
 }).catch(err => {
