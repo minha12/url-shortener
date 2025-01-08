@@ -4,7 +4,8 @@
   "description": "API project for freeCodeCamp",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+		"build": "mkdir -p public && cp -r views/* public/"
   },
   "dependencies": {
     "body-parser": "^1.15.2",
