@@ -10,6 +10,10 @@ var cors = require('cors');
 
 var app = express();
 
+// Add these lines after creating the express app
+app.set('view engine', 'ejs');
+app.set('views', process.cwd() + '/views');
+
 // Basic Configuration 
 var port = process.env.PORT || 3000;
 
@@ -37,12 +41,17 @@ app.get("/api/hello", function (req, res) {
 });
 
 //////////////////////My app started here////////////////////
-process.env.MONGO_URI = 'mongodb+srv://minhha-db:minhha89@cluster0-7zk5p.mongodb.net/test?retryWrites=true&w=majority'
-mongoose.connect(process.env.MONGO_URI, { useNewUrlParser: true, useUnifiedTopology: true }, (err) => {
-  if(!err) {
-    console.log('Successfully connect to MongoDB ...')
-  }
-})
+process.env.MONGO_URI = 'mongodb+srv://minhhax89:ND2GKcDkLjLICZZj@cluster0.igp03.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+
+mongoose.connect(process.env.MONGO_URI, { 
+  useNewUrlParser: true, 
+  useUnifiedTopology: true,
+  dbName: 'urlshortener'
+}).then(() => {
+  console.log('Successfully connected to MongoDB...');
+}).catch(err => {
+  console.error('MongoDB connection error:', err);
+});
 
 const Schema = mongoose.Schema
 const urlSchema = new Schema({
@@ -55,47 +64,62 @@ const URLCollection = mongoose.model('URLCollection', urlSchema)
 //Post a new URL
 app.post('/api/shorturl/new', function(req, res) {
   const originalUrl = req.body.url
-  const urlRegex = /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))\.?)(?::\d{2,5})?(?:[/?#]\S*)?$/i
-  const removedProtocolUrl = originalUrl.replace(/^https?\:\/\//i,'')
-  const domainOnly = removedProtocolUrl.match( /^(?:[^@\/\n]+@)?(?:www\.)?([^:\/\n]+)/i )
-  const validUrl = originalUrl.match(urlRegex)
-  console.log(validUrl)
-  const randomNumber = Math.floor(Math.random() * 10000 + 1)
   
-  if(validUrl){
-    dns.lookup(domainOnly[0], err => {
+  // Use URL constructor for validation
+  try {
+    const urlObj = new URL(originalUrl);
+    if (!urlObj.protocol.startsWith('http')) {
+      return res.json({ error: 'invalid url' });
+    }
+    
+    dns.lookup(urlObj.hostname, (err) => {
       if(err) {
-        res.send('Invalid URL')
-      } else{
-        URLCollection.findOne({original_url: validUrl}, (err, data) => {
-          if(err) return err
-          if(data) {
-            console.log('The given URL is available in database')
-            res.send(data)
-          } else {
-            console.log('Creating new an url entry for ' + originalUrl)
-            var newEntry = new URLCollection({original_url: validUrl, shorturl: randomNumber})
-            newEntry.save((err, data) => {
-              if(err) return err
-              res.send(data)
-            })
-          }
-        })
+        return res.json({ error: 'invalid url' })
       }
+      
+      const randomNumber = Math.floor(Math.random() * 10000 + 1)
+      
+      URLCollection.findOne({ original_url: originalUrl }, (err, data) => {
+        if(err) return res.json({ error: 'Server Error' })
+        if(data) {
+          return res.json({
+            original_url: data.original_url,
+            short_url: data.shorturl
+          })
+        }
+        
+        const newEntry = new URLCollection({
+          original_url: originalUrl,
+          shorturl: randomNumber
+        })
+        
+        newEntry.save((err, data) => {
+          if(err) return res.json({ error: 'Server Error' })
+          return res.json({
+            original_url: data.original_url,
+            short_url: data.shorturl
+          })
+        })
+      })
     })
+  } catch {
+    return res.json({ error: 'invalid url' })
   }
-  
 })
 
 //Visit the shortened URL
 app.get('/api/shorturl/:shortId', (req, res) => {
-  URLCollection.findOne({shorturl: req.params.shortId}, (err, data) => {
-    if(err) return err
-    if(data) {
-      res.redirect(data.original_url)
-    } else {
-      res.render('404', {title: 'Page Not Found'})
+  const shortId = parseInt(req.params.shortId)
+  
+  if(isNaN(shortId)) {
+    return res.json({ error: 'Wrong format' })
+  }
+
+  URLCollection.findOne({ shorturl: shortId }, (err, data) => {
+    if(err || !data) {
+      return res.json({ error: 'No short URL found for the given input' })
     }
+    res.redirect(data.original_url)
   })
 })
 /////////////////////////////////////////////////////////////

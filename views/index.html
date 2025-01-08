@@ -1,48 +1,84 @@
 <!DOCTYPE html>
-
 <html>
+  <head>
+    <title>URL Shortener Microservice</title>
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
+    <link href="/public/css/style.css" rel="stylesheet" type="text/css">
+  </head>
 
-   <head>
-      <title>URL Shortener</title>
-      <link rel="shortcut icon" href="https://cdn.hyperdev.com/us-east-1%3A52a203ff-088b-420f-81be-45bf559d01b1%2Ffavicon.ico" type="image/x-icon"/>
-      <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet" type="text/css">
-      <link href="/public/style.css" rel="stylesheet" type="text/css">
-   </head>
-
-   <body>
-      <div class="container">
-        <h2>API Project: URL Shortener Microservice</h2>
-        <h3>User Story: </h3>
-        <ol>
-          <li>I can POST a URL to <code>[project_url]/api/shorturl/new</code> and I will receive a shortened URL in the JSON response.<br>Example : <code>{"original_url":"www.google.com","short_url":1}</code></li>
-          <li>If I pass an invalid URL that doesn't follow the <code>http(s)://www.example.com(/more/routes)</code> format, the JSON response will contain an error like <code>{"error":"invalid URL"}</code><br>
-          HINT: to be sure that the submitted url points to a valid site you can use the function <code>dns.lookup(host, cb)</code> from the <code>dns</code> core module.</li>
-          <li>When I visit the shortened URL, it will redirect me to my original link.</li>
-        </ol>
+  <body>
+    <div class="container">
+      <h1>URL Shortener Microservice</h1>
+      
+      <div class="endpoint-section">
+        <div class="endpoint-header">
+          <span class="method-post">POST</span>
+          <code>/api/shorturl/new</code>
+        </div>
         
-        <h3>Short URL Creation </h3>
-        <p>
-          example: <code>POST [project_url]/api/shorturl/new</code> - <code>https://www.google.com</code>
-        </p>
-        <form action="/api/shorturl/new" method="POST">
-          <label for="url_input">URL to be shortened</label>
-          <input id="url_input" type="text" name="url" value="https://www.freecodecamp.org">
-          <input type="submit" value="POST URL">
-        </form>
-        <h3>Example Usage:</h3>
-        <a href="https://murl-shortener.glitch.me/api/shorturl/9049">
-          [this_project_url]/api/shorturl/3
-        </a>
+        <div class="endpoint-description">
+          <p>Creates a short URL for a given valid URL.</p>
+          
+          <h3>Try it out</h3>
+          <div class="demo-box">
+            <form action="api/shorturl/new" method="POST">
+              <input id="url_input" type="text" name="url" placeholder="https://www.example.com" />
+              <input type="submit" value="Shorten URL" />
+            </form>
+            <div class="examples-section">
+              <h3>Example Request:</h3>
+              <div class="example-box">
+                <div class="request">
+                  <span class="method-post">POST</span>
+                  <code>/api/shorturl/new</code>
+                  <pre>{
+  "url": "https://www.freecodecamp.org"
+}</pre>
+                </div>
+                <div class="response">
+                  <h4>Response:</h4>
+                  <pre>{
+  "original_url": "https://www.freecodecamp.org",
+  "short_url": 1
+}</pre>
+                </div>
+              </div>
 
-        <h3>Will Redirect to:</h3>
-        <p>https://www.freecodecamp.org/forum/</p>
+              <h3>Using Short URL:</h3>
+              <div class="example-box">
+                <div class="request">
+                  <span class="method-get">GET</span>
+                  <code>/api/shorturl/1</code>
+                </div>
+                <div class="response">
+                  <p>Redirects to: https://www.freecodecamp.org</p>
+                </div>
+              </div>
+
+              <h3>Invalid URL Example:</h3>
+              <div class="example-box">
+                <div class="request">
+                  <span class="method-post">POST</span>
+                  <code>/api/shorturl/new</code>
+                  <pre>{
+  "url": "invalid-url"
+}</pre>
+                </div>
+                <div class="response">
+                  <h4>Response:</h4>
+                  <pre>{
+  "error": "invalid url"
+}</pre>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
-      <div class="footer">
-        <p>
-          by <a href="https://www.freecodecamp.org">freeCodeCamp</a>
-        </p>
-      </div>
-   </body>
-
-
+    </div>
+    
+    <div class="footer">
+      <p>by <a href="https://minha12.github.io/personal-portfolio/">Minh-Ha Le</a></p>
+    </div>
+  </body>
 </html>
