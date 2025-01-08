@@ -1,6 +1,6 @@
 const BASE_URL = window.location.hostname === 'localhost' 
   ? 'http://localhost:3000' 
-  : 'https://your-url-shortener-service.com';
+  : 'https://url-shortener-4hvu.onrender.com';
 
 document.getElementById('urlForm').addEventListener('submit', async function(e) {
   e.preventDefault();
